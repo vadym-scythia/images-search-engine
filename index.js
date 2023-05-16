@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import weaviate from 'weaviate-ts-client'
-import fs, { readFileSync, writeFileSync } from 'fs'
 
 const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -15,12 +14,11 @@ const client = weaviate.client({
 // for the first execution use here add_images_to_db.js
 
 app.post('/search', async (req, res) => {
-    console.log('hello from /search!');
-    const testImg = req.body.image;
+    const requestImage = req.body.image;
     const resultImg = await client.graphql.get()
         .withClassName('Meme')
         .withFields(['image'])
-        .withNearImage({ image: testImg })
+        .withNearImage({ image: requestImage })
         .withLimit(1)
         .do();
     const result = resultImg.data.Get.Meme[0].image;
